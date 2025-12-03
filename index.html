@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Casa Domótica</title>
+
+<style>
+    body {
+        background: #eef2f3;
+        font-family: "Segoe UI", Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+    }
+
+    header {
+        padding: 25px;
+        background: linear-gradient(90deg, #4b79a1, #283e51);
+        color: white;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+    }
+
+    h1 {
+        font-size: 42px;
+        margin: 0;
+    }
+
+    h3 {
+        font-size: 20px;
+        margin: 5px 0 0 0;
+        color: #dcdcdc;
+    }
+
+    .card {
+        background: white;
+        width: 330px;
+        margin: 20px auto;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    }
+
+    .temp {
+        font-size: 40px;
+        font-weight: bold;
+        color: #cc0000;
+        margin-top: 10px;
+    }
+
+    .section-title {
+        margin-top: 40px;
+        font-size: 28px;
+        color: #444;
+        font-weight: bold;
+    }
+
+    button {
+        background: #4b79a1;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        margin: 8px;
+    }
+
+    button:hover {
+        background: #35516a;
+    }
+
+    .state {
+        font-weight: bold;
+        color: #1e3c72;
+        font-size: 18px;
+    }
+</style>
+
+<script>
+// ACTUALIZAR DATOS CADA 1.5 SEG
+function updateData() {
+    fetch("/data")
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("cocinaT").innerText = data.cocina + " °C";
+        document.getElementById("salaT").innerText = data.sala + " °C";
+        document.getElementById("masterT").innerText = data.master + " °C";
+        document.getElementById("patioT").innerText = data.patio + " °C";
+        document.getElementById("promT").innerText = data.promedio + " °C";
+
+        document.getElementById("mode").innerText = data.modo;
+
+        document.getElementById("ventState").innerText =
+            data.vent ? "Encendido" : "Apagado";
+
+        document.getElementById("heatState").innerText =
+            data.heat ? "Encendido" : "Apagado";
+    })
+    .catch(err => console.error("Error:", err));
+}
+
+setInterval(updateData, 1500);
+</script>
+
+</head>
+
+<body>
+
+<header>
+    <h1>Casa Domótica</h1>
+    <h3>Desarrolladores: Freire • Jaya • Congo</h3>
+</header>
+
+<h2 class="section-title">Sensores de Temperatura</h2>
+
+<div class="card">
+    <h3>Cocina</h3>
+    <div class="temp" id="cocinaT">-- °C</div>
+</div>
+
+<div class="card">
+    <h3>Sala</h3>
+    <div class="temp" id="salaT">-- °C</div>
+</div>
+
+<div class="card">
+    <h3>Dormitorio Master</h3>
+    <div class="temp" id="masterT">-- °C</div>
+</div>
+
+<div class="card">
+    <h3>Patio</h3>
+    <div class="temp" id="patioT">-- °C</div>
+</div>
+
+<div class="card">
+    <h3>Promedio Total</h3>
+    <div class="temp" id="promT">-- °C</div>
+</div>
+
+<h2 class="section-title">Control de Actuadores</h2>
+
+<div class="card">
+    <h3>Modo: <span id="mode">--</span></h3>
+    <button onclick="fetch('/modo/auto')">Automático</button>
+    <button onclick="fetch('/modo/manual')">Manual</button>
+</div>
+
+<div class="card">
+    <h3>Ventilador ( > 25°C )</h3>
+    Estado: <span class="state" id="ventState">--</span><br><br>
+    <button onclick="fetch('/vent/on')">Encender</button>
+    <button onclick="fetch('/vent/off')">Apagar</button>
+</div>
+
+<div class="card">
+    <h3>Calefactor ( < 20°C )</h3>
+    Estado: <span class="state" id="heatState">--</span><br><br>
+    <button onclick="fetch('/heat/on')">Encender</button>
+    <button onclick="fetch('/heat/off')">Apagar</button>
+</div>
+
+</body>
+</html>
